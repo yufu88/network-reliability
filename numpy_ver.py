@@ -79,6 +79,7 @@ def d_MP(current_capacity):
     d_MP = np.delete(current_capacity,I,0)
     return(d_MP)
 
+
 # num of nodes
 node_num = 4
 node = np.zeros((node_num, node_num), dtype=int)
@@ -112,6 +113,7 @@ mp_max_capacity = [np.min(c[np.nonzero(c)]) for c in cap]
 
 # generate feasible solutions
 demand = 3
+
 feasible_solutions = feasible_solutions_get(demand, mp_max_capacity, arc_max_capacity)
 
 # current capacity
@@ -120,25 +122,31 @@ current_capacity = current_capacity_get(feasible_solutions, N)
 #d_MP
 d_MP = d_MP(current_capacity)
 
-
-prob_n = 0
-prob_total = 1
-
-#print(d_MP[0])
+# TM1
+TM1 = 1
 for i in range(arc_num):
-    print('d_mp:',d_MP[2][i])
+    prob_k = 0
     for k in range(d_MP[2][i],arc_capacity.shape[1]):
-        print(i,k)
-        print('capacity', arc_capacity[i][k])
+        prob_k+=arc_capacity[i][k]
+    TM1 *= prob_k
+print(TM1)
+
+TM2 = 1
+temp2 = []
+for i in range(arc_num):
+    temp2.append(max(d_MP[2][i],d_MP[0][i]))
+
+pr2 = 1
+for i in range(arc_num):
+    prob_k = 0
+    for k in range(d_MP[0][i],arc_capacity.shape[1]):
+        prob_k+=arc_capacity[i][k]
+    pr2 *= prob_k
 
 
-print(arc_capacity[0][3])
-"""for k in range(arc_num):
-    for i in range(d_MP[0][k], len((arc_capacity[0]))):
-        prob_n += arc_capacity[k][i]
-        print(arc_capacity[k][i])
-    print("n")
-    prob_total = prob_total * prob_n
-    prob_n = 0
-    
-"""
+for i in range(arc_num):
+    prob_k = 0
+    for k in range(temp2[i],arc_capacity.shape[1]):
+        prob_k+=arc_capacity[i][k]
+    TM2 *= prob_k
+print(pr2-TM2)
