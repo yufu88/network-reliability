@@ -20,7 +20,7 @@ def path_finder(start_node, end_node, visited, path, all_paths):
         path.pop()
         visited[start_node] = False
 
-def print_all_path( start_node, end_node):
+def print_all_path(start_node, end_node):
     visited = [False]*(len(node))
     path = list()
     all_paths = list()
@@ -79,6 +79,37 @@ def d_MP(current_capacity):
     d_MP = np.delete(current_capacity,I,0)
     return(d_MP)
 
+def probability(cap_array):
+    TM=1
+    for i in range(arc_num):
+        prob_k = 0
+        for k in range(cap_array[i],arc_capacity.shape[1]):
+            prob_k += arc_capacity[i][k]
+        TM *= prob_k
+    return round(TM,4)
+
+def compare(array1, array2):
+    temp = np.zeros(arc_num, dtype=int)
+    for i in range(arc_num):
+        temp[i] = max(array1[i],array2[i])
+    return temp
+
+def TM_caculator(d_MP, index):
+    PR = probability(d_MP[index])
+    Y = 0
+    for i in range(index):
+        temp = compare(d_MP[index], d_MP[i])
+        Y = max(Y, probability(temp))
+    TM = PR-Y
+    return TM
+
+def RSDP(d_MP):
+    index = 0
+    prob = 0
+    for i in range(len(d_MP)):
+        prob += TM_caculator(d_MP, index)
+        index+=1
+    return round(prob,4)
 
 # num of nodes
 node_num = 4
@@ -122,31 +153,6 @@ current_capacity = current_capacity_get(feasible_solutions, N)
 #d_MP
 d_MP = d_MP(current_capacity)
 
-# TM1
-TM1 = 1
-for i in range(arc_num):
-    prob_k = 0
-    for k in range(d_MP[2][i],arc_capacity.shape[1]):
-        prob_k+=arc_capacity[i][k]
-    TM1 *= prob_k
-print(TM1)
 
-TM2 = 1
-temp2 = []
-for i in range(arc_num):
-    temp2.append(max(d_MP[2][i],d_MP[0][i]))
-
-pr2 = 1
-for i in range(arc_num):
-    prob_k = 0
-    for k in range(d_MP[0][i],arc_capacity.shape[1]):
-        prob_k+=arc_capacity[i][k]
-    pr2 *= prob_k
-
-
-for i in range(arc_num):
-    prob_k = 0
-    for k in range(temp2[i],arc_capacity.shape[1]):
-        prob_k+=arc_capacity[i][k]
-    TM2 *= prob_k
-print(pr2-TM2)
+    
+print(RSDP(d_MP))
