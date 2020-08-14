@@ -79,6 +79,7 @@ def d_MP(current_capacity):
     d_MP = np.delete(current_capacity,I,0)
     return(d_MP)
 
+# caculate prob
 def probability(cap_array):
     TM=1
     for i in range(arc_num):
@@ -88,12 +89,14 @@ def probability(cap_array):
         TM *= prob_k
     return round(TM,4)
 
+# array comparison
 def compare(array1, array2):
     temp = np.zeros(arc_num, dtype=int)
     for i in range(arc_num):
         temp[i] = max(array1[i],array2[i])
     return temp
 
+# prob of each iteration
 def TM_caculator(d_MP, index):
     PR = probability(d_MP[index])
     Y = 0
@@ -103,6 +106,7 @@ def TM_caculator(d_MP, index):
     TM = PR-Y
     return TM
 
+# sum prob
 def RSDP(d_MP):
     index = 0
     prob = 0
@@ -153,6 +157,5 @@ current_capacity = current_capacity_get(feasible_solutions, N)
 #d_MP
 d_MP = d_MP(current_capacity)
 
-
-    
+#caculate RSDP
 print(RSDP(d_MP))
