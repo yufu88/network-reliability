@@ -119,6 +119,11 @@ def RSDP(d_MP):
         index+=1
     return round(prob,4)
 
+def rate(bag_num, failure, success_rate):
+    C = factorial(bag_num+failure-1)/(factorial(failure)*factorial(bag_num-1))
+    rate = C*pow(success_rate,bag_num)*pow((1-success_rate),failure)
+    return round(rate,4)
+
 # num of nodes
 node_num = 10
 node = np.zeros((node_num, node_num), dtype=int)
@@ -175,9 +180,6 @@ d_MP = d_MP(current_capacity)
 #caculate RSDP
 success_rate = RSDP(d_MP)
 
-def rate(bag_num, failure, success_rate):
-    C = factorial(bag_num+failure-1)/(factorial(failure)*factorial(bag_num-1))
-    rate = C*pow(success_rate,bag_num)*pow((1-success_rate),failure)
-    return round(rate,4)
+
 
 print(rate(3,1,0.9))
