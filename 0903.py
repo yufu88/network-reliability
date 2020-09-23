@@ -40,31 +40,32 @@ def minimal_path(start_node, end_node):
             mp[p][arc_used[0]] = 1
     return(mp)
 
-def feasible_solutions_get(demand_1, demand_2, mp_max_capacity, arc_max_capacity):
-    
-    feasible_solutions = []
-    options = [list(range(c+1)) for c in mp_max_capacity]
-
-    for flow in np.array(list(product(*options))):
+def solution_finder(pointer,  Q, c_array, P=[]):
+    if pointer == len(c_array):
         check = np.full(3, False, dtype=bool)
-
+        
         # 1. flow_sum = d
-        s1= np.sum(flow[:count_2])
-        s2= np.sum(flow[count_2:])
-        if( s1== demand_1 & s2== demand_2):
+        P = np.array(P, dtype=int)
+        print(P)
+        s1= np.sum(P[:count_2])
+        s2= np.sum(P[count_2:])
+        if s1== demand_1 & s2== demand_2:
             check[0] = True
-       
-
         # 2. flow <= mp_max_capacity
-        check[1] = (flow <= mp_max_capacity).all()
-
+        check[1] = (P <= mp_max_capacity).all()
         # 3. flow_sum <= arc_max_capacity
-        check[2] = (np.sum(flow.reshape(np.size(N,0),1)*N, axis=0) <= arc_max_capacity).all()
+        check[2] = (np.sum(P.reshape(np.size(N,0),1)*N[:pointer], axis=0) <= arc_max_capacity).all()
 
-        if(check.all()==True):
-            feasible_solutions.append(flow)
-    feasible_solutions = np.array(feasible_solutions)
-    return(feasible_solutions)
+        if check.all():
+            Q.append(P)
+    else :
+        for i in range(c_array[pointer]+1):
+            R = np.array(P, dtype=int)
+            # 3. flow_sum <= arc_max_capacity
+            if pointer==0 or (np.sum(R.reshape(pointer,1)*N[:pointer], axis=0) <= arc_max_capacity).all():
+                solution_finder(pointer+1, Q, c_array, P+[i])
+            else:
+                break
 
 def current_capacity_get(feasible_solutions, N):
     current_capacity = []
@@ -129,21 +130,48 @@ def transfer_num(expection, r):
     return round(expection/r,0)
 
 # num of nodes
-node_num = 10
+node_num = 8
 node = np.zeros((node_num, node_num), dtype=int)
 
-network(0,3)
 network(0,2)
+network(0,4)
 network(1,2)
 network(1,4)
 network(2,3)
 network(2,4)
+network(2,5)
+network(3,4)
+network(3,5)
+network(3,6)
+network(3,7)
+network(4,2)
+network(4,3)
+network(4,5)
+network(5,2)
+network(5,3)
+network(5,4)
+network(5,6)
+network(5,7)
+
 
 arc_capacity = np.array([
 [0.25,  0.25,  0.5,    0],
 [0.25,  0.75,  0,    0],
 [0.25,  0.25,  0.5,    0],
 [0.25,  0.75,  0,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.75,  0,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.75,  0,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.75,  0,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.75,  0,    0],
+[0.25,  0.25,  0.5,    0],
 [0.25,  0.25,  0.5,    0],
 [0.25,  0.25,  0.5,    0]
 ])
@@ -152,7 +180,6 @@ arc_capacity = np.array([
 arc_index = np.argwhere(node==1)
 arc_num = len(arc_index)
 arc_max_capacity = (np.count_nonzero(arc_capacity, axis=1)-1).reshape(1,len(arc_index))
-arc_max_capacity = arc_max_capacity
 
 N = np.empty((0,arc_num),dtype=int)
 count_2 = 0
@@ -165,16 +192,21 @@ for i in [3,4]:
         else: 
             count_4 += len(minimal_path(j,i))
 
-
 # find maximal capacity of each mp
 cap = N*arc_max_capacity
 mp_max_capacity = [np.min(c[np.nonzero(c)]) for c in cap]
+print(N)
 
 # generate feasible solutions
-demand_1 = 3
-demand_2 = 3
+demand_1 = 1
+demand_2 = 1
 
-feasible_solutions = feasible_solutions_get(demand_1, demand_2, mp_max_capacity, arc_max_capacity)
+feasible_solutions = []
+
+solution_finder(0, feasible_solutions, mp_max_capacity)
+print("ohoh",feasible_solutions)
+
+"""
 # current capacity
 current_capacity = current_capacity_get(feasible_solutions, N)
 
@@ -188,3 +220,4 @@ r = rate(3,1,0.9)
 
 num = transfer_num(5000,r)
 print(num)
+"""
