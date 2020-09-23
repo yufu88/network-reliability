@@ -46,7 +46,7 @@ def solution_finder(pointer,  Q, c_array, P=[]):
         
         # 1. flow_sum = d
         P = np.array(P, dtype=int)
-        print(P)
+        
         s1= np.sum(P[:count_2])
         s2= np.sum(P[count_2:])
         if s1== demand_1 & s2== demand_2:
@@ -204,7 +204,7 @@ demand_2 = 1
 feasible_solutions = []
 
 solution_finder(0, feasible_solutions, mp_max_capacity)
-print("ohoh",feasible_solutions)
+print(feasible_solutions.shape)
 
 """
 # current capacity
