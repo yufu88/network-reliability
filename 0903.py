@@ -42,6 +42,7 @@ def minimal_path(start_node, end_node):
 
 def solution_finder(pointer,  Q, c_array, P=[]):
     if pointer == len(c_array):
+        
         check = np.full(3, False, dtype=bool)
         
         # 1. flow_sum = d
@@ -92,6 +93,7 @@ def probability(cap_array):
         for k in range(cap_array[i],arc_capacity.shape[1]):
             prob_k += arc_capacity[i][k]
         TM *= prob_k
+        print("a", TM)
     return round(TM,4)
 
 # array comparison
@@ -101,24 +103,28 @@ def compare(array1, array2):
         temp[i] = max(array1[i],array2[i])
     return temp
 
-# prob of each iteration
-def TM_caculator(d_MP, index):
-    PR = probability(d_MP[index])
-    Y = 0
-    for i in range(index):
-        temp = compare(d_MP[index], d_MP[i])
-        Y = max(Y, probability(temp))
-    TM = PR-Y
-    return TM
+def comparison(index, base_line, vector=[]):
+    if len(vector) == 0:
+        vector = base_line
 
-# sum prob
+    if index == 0:
+        return probability(vector)
+    else:
+        vector = compare(base_line, vector)
+        return comparison(index-1, base_line, vector)
+
 def RSDP(d_MP):
-    index = 0
+    index = len(d_MP)
     prob = 0
     for i in range(len(d_MP)):
-        prob += TM_caculator(d_MP, index)
-        index+=1
-    return round(prob,4)
+        if i==0:
+            TM = probability(d_MP[i])
+            prob += TM
+        else:
+            TM = probability(d_MP[i]) - comparison(i, d_MP[i])
+            prob += TM
+    return prob
+
 
 def rate(bag_num, failure, success_rate):
     # C ( n+m-1 m )
@@ -134,44 +140,17 @@ node_num = 8
 node = np.zeros((node_num, node_num), dtype=int)
 
 network(0,2)
-network(0,4)
+network(0,3)
 network(1,2)
 network(1,4)
 network(2,3)
 network(2,4)
-network(2,5)
-network(3,4)
-network(3,5)
-network(3,6)
-network(3,7)
-network(4,2)
-network(4,3)
-network(4,5)
-network(5,2)
-network(5,3)
-network(5,4)
-network(5,6)
-network(5,7)
-
 
 arc_capacity = np.array([
-[0.25,  0.25,  0.5,    0],
 [0.25,  0.75,  0,    0],
-[0.25,  0.25,  0.5,    0],
 [0.25,  0.75,  0,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
 [0.25,  0.75,  0,    0],
-[0.25,  0.25,  0.5,    0],
 [0.25,  0.75,  0,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.75,  0,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.75,  0,    0],
-[0.25,  0.25,  0.5,    0],
 [0.25,  0.25,  0.5,    0],
 [0.25,  0.25,  0.5,    0]
 ])
@@ -182,6 +161,7 @@ arc_num = len(arc_index)
 arc_max_capacity = (np.count_nonzero(arc_capacity, axis=1)-1).reshape(1,len(arc_index))
 
 N = np.empty((0,arc_num),dtype=int)
+
 count_2 = 0
 count_4 = 0
 for i in [3,4]:
@@ -195,18 +175,15 @@ for i in [3,4]:
 # find maximal capacity of each mp
 cap = N*arc_max_capacity
 mp_max_capacity = [np.min(c[np.nonzero(c)]) for c in cap]
-print(N)
 
 # generate feasible solutions
-demand_1 = 1
-demand_2 = 1
+demand_1 = 2
+demand_2 = 2
 
 feasible_solutions = []
 
 solution_finder(0, feasible_solutions, mp_max_capacity)
-print(feasible_solutions.shape)
 
-"""
 # current capacity
 current_capacity = current_capacity_get(feasible_solutions, N)
 
@@ -215,9 +192,4 @@ d_MP = d_MP(current_capacity)
 
 #caculate RSDP
 success_rate = RSDP(d_MP)
-
-r = rate(3,1,0.9) 
-
-num = transfer_num(5000,r)
-print(num)
-"""
+print(success_rate)
