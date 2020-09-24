@@ -93,7 +93,6 @@ def probability(cap_array):
         for k in range(cap_array[i],arc_capacity.shape[1]):
             prob_k += arc_capacity[i][k]
         TM *= prob_k
-        print("a", TM)
     return round(TM,4)
 
 # array comparison
@@ -147,10 +146,10 @@ network(2,3)
 network(2,4)
 
 arc_capacity = np.array([
-[0.25,  0.75,  0,    0],
-[0.25,  0.75,  0,    0],
-[0.25,  0.75,  0,    0],
-[0.25,  0.75,  0,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.25,    0.25],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.5,    0],
 [0.25,  0.25,  0.5,    0],
 [0.25,  0.25,  0.5,    0]
 ])
@@ -177,8 +176,8 @@ cap = N*arc_max_capacity
 mp_max_capacity = [np.min(c[np.nonzero(c)]) for c in cap]
 
 # generate feasible solutions
-demand_1 = 2
-demand_2 = 2
+demand_1 = 3
+demand_2 = 3
 
 feasible_solutions = []
 
