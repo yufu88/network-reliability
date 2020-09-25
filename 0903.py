@@ -139,15 +139,43 @@ node_num = 8
 node = np.zeros((node_num, node_num), dtype=int)
 
 network(0,2)
-network(0,3)
+network(0,4)
 network(1,2)
 network(1,4)
 network(2,3)
 network(2,4)
+network(2,5)
+network(3,2)
+network(3,4)
+network(3,5)
+network(3,6)
+network(3,7)
+network(4,2)
+network(4,3)
+network(4,5)
+network(5,2)
+network(5,3)
+network(5,4)
+network(5,6)
+network(5,7)
 
 arc_capacity = np.array([
 [0.25,  0.25,  0.5,    0],
 [0.25,  0.25,  0.25,    0.25],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.25,    0.25],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.25,    0.25],
+[0.25,  0.25,  0.5,    0],
+[0.25,  0.25,  0.5,    0],
 [0.25,  0.25,  0.5,    0],
 [0.25,  0.25,  0.5,    0],
 [0.25,  0.25,  0.5,    0],
@@ -158,7 +186,7 @@ arc_capacity = np.array([
 arc_index = np.argwhere(node==1)
 arc_num = len(arc_index)
 arc_max_capacity = (np.count_nonzero(arc_capacity, axis=1)-1).reshape(1,len(arc_index))
-
+"""
 N = np.empty((0,arc_num),dtype=int)
 
 count_2 = 0
@@ -192,3 +220,4 @@ d_MP = d_MP(current_capacity)
 #caculate RSDP
 success_rate = RSDP(d_MP)
 print(success_rate)
+"""
