@@ -135,66 +135,44 @@ def transfer_num(expection, r):
     return round(expection/r,0)
 
 # num of nodes
-node_num = 8
+node_num = 5
 node = np.zeros((node_num, node_num), dtype=int)
 
-network(0,2)
-network(0,4)
+network(0,1)
 network(1,2)
+network(0,2)
 network(1,4)
-network(2,3)
+network(1,3)
 network(2,4)
-network(2,5)
-network(3,2)
+network(2,3)
 network(3,4)
-network(3,5)
-network(3,6)
-network(3,7)
-network(4,2)
-network(4,3)
-network(4,5)
-network(5,2)
-network(5,3)
-network(5,4)
-network(5,6)
-network(5,7)
+
 
 arc_capacity = np.array([
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.25,    0.25],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.25,    0.25],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.25,    0.25],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0],
-[0.25,  0.25,  0.5,    0]
+[0.05,  0.05,  0.1,    0.8, 0, 0],
+[0.05,  0.05,  0.1,    0.8, 0, 0],
+[0.05,  0.1,   0.85,   0,   0, 0],
+[0.1,   0.9,   0 ,     0,   0, 0], 
+[0.1,   0.9,   0 ,     0,   0, 0], 
+[0.05,  0.05,  0.1,    0.2, 0.6, 0],
+[0.05,  0.1,   0.1,    0.1, 0.1, 0.55], 
+[0.05,  0.05,  0.1,    0.8, 0, 0]
 ])
 
+lead_time = np.array([2,1,3,3,1,2,2,1])
 # list of arcs
 arc_index = np.argwhere(node==1)
 arc_num = len(arc_index)
 arc_max_capacity = (np.count_nonzero(arc_capacity, axis=1)-1).reshape(1,len(arc_index))
-"""
+
 N = np.empty((0,arc_num),dtype=int)
 
 count_2 = 0
 count_4 = 0
-for i in [3,4]:
-    for j in range(2):
+for i in [1,4]:
+    for j in range(1):
         N = np.append(N, minimal_path(j,i),axis=0)
-        if i==3:
+        if i==1:
             count_2 += len(minimal_path(j,i))
         else: 
             count_4 += len(minimal_path(j,i))
@@ -204,13 +182,13 @@ cap = N*arc_max_capacity
 mp_max_capacity = [np.min(c[np.nonzero(c)]) for c in cap]
 
 # generate feasible solutions
-demand_1 = 3
-demand_2 = 3
-
+demand_1 = 0
+demand_2 = 8
 feasible_solutions = []
 
 solution_finder(0, feasible_solutions, mp_max_capacity)
 
+""""
 # current capacity
 current_capacity = current_capacity_get(feasible_solutions, N)
 
