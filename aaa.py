@@ -88,17 +88,33 @@ def compare(array1, array2):
         temp[i] = max(array1[i],array2[i])
     return temp
 
+"""
+# sum prob
+def RSDP(X_array, index):
+    prob = 0
+    for i in range(index):
+        if i==0:
+            prob += probability(d_MP[i])
+        else:
+            temp_1 = probability(d_MP[i])
+            if i==1:
+                temp_2 = probability(compare(d_MP[i-1],d_MP[i]))
+            else:
+                for j in range(i-1):
+                    X_array[j] = compare(X_array[j],X_array[i])
+                    print(X_array)
+                temp_2 = RSDP(X_array, index-1)
+    prob += temp_1-temp_2
+    return round(prob,4)"""
+
 # prob of each iteration
 def TM_caculator(d_MP, index):
     PR = probability(d_MP[index])
     Y = 0
     for i in range(index):
         temp = compare(d_MP[index], d_MP[i])
-        print(d_MP[index], d_MP[i])
-        print("t",temp)
         Y = max(Y, probability(temp))
     TM = PR-Y
-    print(TM)
     return TM
 
 # sum prob
@@ -107,15 +123,15 @@ def RSDP(d_MP):
     prob = 0
     for i in range(len(d_MP)):
         prob += TM_caculator(d_MP, index)
+        #print("T",TM_caculator(d_MP, index))
         index+=1
         
     return round(prob,4)
-
 #network building
 node_num = 5
 d1 = 8
 d2 = 0
-t = 12
+t = 9
 
 node = np.zeros((node_num, node_num), dtype=int)
 network(0,1)
@@ -153,12 +169,8 @@ MP = np.append(MP,minimal_path(0,4, node, d1, t),axis=0)
 count += len(MP)
 MP = np.append(MP,minimal_path(1,4, node, 0, t),axis=0)
 
-#print(mp)
-#print(flow)
-
 
 d_MP = mp_compare(mp)
-
 print(d_MP)
 
 print(RSDP(d_MP[:count]))
