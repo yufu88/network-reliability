@@ -64,13 +64,12 @@ def echeck(a1, a2):
 def mp_compare(mp_array):
     c_cap = np.reshape(flow, (len(flow),1))*mp
     index = []
-    cc_cap = []
     for i in range(len(c_cap)-1):
         for j in range(i+1, len(c_cap)):
             if echeck(c_cap[i], c_cap[j]):
                 index.append(j)
-                cc_cap = np.delete(c_cap, index, 0)    
-    return(cc_cap)
+    c_cap = np.delete(c_cap, index, 0)   
+    return(c_cap)
 
 # caculate prob
 def probability(cap_array):
@@ -95,8 +94,11 @@ def TM_caculator(d_MP, index):
     Y = 0
     for i in range(index):
         temp = compare(d_MP[index], d_MP[i])
+        print(d_MP[index], d_MP[i])
+        print("t",temp)
         Y = max(Y, probability(temp))
     TM = PR-Y
+    print(TM)
     return TM
 
 # sum prob
@@ -105,7 +107,6 @@ def RSDP(d_MP):
     prob = 0
     for i in range(len(d_MP)):
         prob += TM_caculator(d_MP, index)
-        #print("T",TM_caculator(d_MP, index))
         index+=1
         
     return round(prob,4)
@@ -114,7 +115,7 @@ def RSDP(d_MP):
 node_num = 5
 d1 = 8
 d2 = 0
-t = 9
+t = 12
 
 node = np.zeros((node_num, node_num), dtype=int)
 network(0,1)
@@ -150,7 +151,7 @@ MP = np.empty((0,arc_num),dtype=int)
 count = 0
 MP = np.append(MP,minimal_path(0,4, node, d1, t),axis=0)
 count += len(MP)
-MP = np.append(MP,minimal_path(1,4, node, d2, t),axis=0)
+MP = np.append(MP,minimal_path(1,4, node, 0, t),axis=0)
 
 #print(mp)
 #print(flow)
@@ -159,7 +160,8 @@ MP = np.append(MP,minimal_path(1,4, node, d2, t),axis=0)
 d_MP = mp_compare(mp)
 
 print(d_MP)
-print(RSDP(d_MP[count:]))
+
+print(RSDP(d_MP[:count]))
 
 """
 Q = []
