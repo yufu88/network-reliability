@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 # connection matrix of network
 def network(from_node, to_node):
@@ -27,7 +28,7 @@ def print_all_path(start_node, end_node):
     return(all_paths)
 
 # find all mp
-def minimal_path(start_node, end_node, node):
+def minimal_path(start_node, end_node, node, demand, time):
     pathset = print_all_path(start_node, end_node)
     arc_index = np.argwhere(node==1)
     arc_num = len(arc_index)
@@ -38,60 +39,81 @@ def minimal_path(start_node, end_node, node):
             arc = [pathset[p][i], pathset[p][i+1]]
             arc_used = np.where((arc_index == arc).all(axis=1))
             P[p][arc_used[0]] = 1
-
+    
     arc_max_capacity = (np.count_nonzero(arc_capacity, axis=1)-1).reshape(1,arc_num)
     P_lead_time = np.sum(P*lead_time, axis=1)
     P_max_capacity = [np.min(c[np.nonzero(c)]) for c in P*arc_max_capacity]
-
     mp = []
     max_cap = []
+    flow = []
     for i in range(len(P)):
-        if P_lead_time[i]+(demand/P_max_capacity[i]) <= time:
+        ceiling = math.ceil(demand/(time-P_lead_time[i]))
+        if P_max_capacity[i] >= ceiling:
             mp.append(P[i])
             max_cap.append(P_max_capacity[i])
-    return(np.array(mp), max_cap, arc_max_capacity)
+            flow.append(ceiling)
+    return(np.array(mp), max_cap, arc_max_capacity.flatten(),flow)
+
 
 def echeck(a1, a2):
-    e_array = np.full(3, False, dtype=bool)
+    e_array = np.full(len(a1), False, dtype=bool)
     for i in range(len(a1)):
         if a1[i]<=a2[i]:
             e_array[i] = True
     return(all(e_array))
 
-# value = demand, v_num=mp_num
-def find(pointer, value, v_num, mp_array, F=[], total=0):
-    if pointer == (v_num-1):
-        F.append(value-total)
+def mp_compare(mp_array):
+    c_cap = np.reshape(MP[3], (len(MP[3]),1))*MP[0]
+    index = []
+    for i in range(len(c_cap)-1):
+        for j in range(i+1, len(c_cap)):
+            if echeck(c_cap[i], c_cap[j]):
+                index.append(j)
+                c_cap = np.delete(c_cap, index, 0)    
+    return(c_cap)
 
-        check = np.full(3, False, dtype=bool)
-        #1
-        if np.sum(F) == value:
-            check[0]=True
+# caculate prob
+def probability(cap_array):
+    TM=1
+    for i in range(arc_num):
+        prob_k = 0
+        for k in range(cap_array[i],arc_capacity.shape[1]):
+            prob_k += arc_capacity[i][k]
+        TM *= prob_k
+    return round(TM,4)
+
+# array comparison
+def compare(array1, array2):
+    temp = np.zeros(arc_num, dtype=int)
+    for i in range(arc_num):
+        temp[i] = max(array1[i],array2[i])
+    return temp
+
+# prob of each iteration
+def TM_caculator(d_MP, index):
+    PR = probability(d_MP[index])
+    Y = 0
+    for i in range(index):
+        temp = compare(d_MP[index], d_MP[i])
+        Y = max(Y, probability(temp))
+    TM = PR-Y
+    return TM
+
+# sum prob
+def RSDP(d_MP):
+    index = 0
+    prob = 0
+    for i in range(len(d_MP)):
+        prob += TM_caculator(d_MP, index)
+        print("T",TM_caculator(d_MP, index))
+        index+=1
         
-        #2 flow <= mp_max_capacity
-        check[1] = echeck(F,mp_array[1])
-        
-        #3 flow_sum <= arc_max_capacity
-        flow_sum = np.array(np.sum(np.reshape(F,(len(F),1))*MP[0],axis=0))
-        print(flow_sum)
-        #check[2] = echeck(flow_sum, mp_array[2])
-        
-        Q.append(list(F))
-        del F[-1]
-        return Q
-    else:
-        for i in range(value-total): 
-            if total + i <=value:
-                F.append(i)
-                find(pointer+1, value, v_num, mp_array, F, total+i)
-                del F[-1]
-            else:
-                break
+    return round(prob,4)
 
 #network building
 node_num = 5
-demand = 8
-time = 9
+d = 8
+t = 12
 
 node = np.zeros((node_num, node_num), dtype=int)
 network(0,1)
@@ -116,9 +138,33 @@ arc_capacity = np.array([
 
 lead_time = np.array([2,3,1,1,3,2,2,1])
 
-MP = minimal_path(0,4, node)
+MP = minimal_path(0,4, node, d, t)
+arc_index = np.argwhere(node==1)
+arc_num = len(arc_index)
+d_MP = mp_compare(MP)
+print(d_MP)
 
-Q=[]
-find(0,8,len(MP[0]),MP)
-print(MP[0])
+for i in range
 
+"""
+Q = []
+
+def find(pointer, value, v_num, F=[], total=0):
+      if pointer == v_num:
+          F.append(value-total)
+          print(F)
+          Q.append(list(F))
+          del F[-1]
+          return Q
+      else:
+          for i in range(value-total): 
+              if total + i <=value:
+                  F.append(i)
+                  find(pointer+1, value, v_num, F, total+i)
+                  del F[-1]
+              else:
+                  break
+
+find(1, d, len(MP[3]))
+
+"""
