@@ -41,6 +41,7 @@ def minimal_path(start_node, end_node):
     return(mp)
 
 def solution_finder(pointer,  Q, c_array, P=[]):
+    
     if pointer == len(c_array):
         
         check = np.full(3, False, dtype=bool)
@@ -50,15 +51,17 @@ def solution_finder(pointer,  Q, c_array, P=[]):
         
         s1= np.sum(P[:count_2])
         s2= np.sum(P[count_2:])
-        if s1== demand_1 & s2== demand_2:
+        
+        if s1== demand_1 & s2== demand_2: 
             check[0] = True
         # 2. flow <= mp_max_capacity
         check[1] = (P <= mp_max_capacity).all()
         # 3. flow_sum <= arc_max_capacity
         check[2] = (np.sum(P.reshape(np.size(N,0),1)*N[:pointer], axis=0) <= arc_max_capacity).all()
-
+        
         if check.all():
             Q.append(P)
+            
     else :
         for i in range(c_array[pointer]+1):
             R = np.array(P, dtype=int)
@@ -176,18 +179,18 @@ for i in [1,4]:
             count_2 += len(minimal_path(j,i))
         else: 
             count_4 += len(minimal_path(j,i))
-
+print(count_2)
 # find maximal capacity of each mp
 cap = N*arc_max_capacity
 mp_max_capacity = [np.min(c[np.nonzero(c)]) for c in cap]
 
 # generate feasible solutions
 demand_1 = 0
-demand_2 = 8
+demand_2 = 3
 feasible_solutions = []
 
 solution_finder(0, feasible_solutions, mp_max_capacity)
-
+print(feasible_solutions)
 """"
 # current capacity
 current_capacity = current_capacity_get(feasible_solutions, N)
