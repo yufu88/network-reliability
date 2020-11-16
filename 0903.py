@@ -37,13 +37,14 @@ def minimal_path(start_node, end_node):
         for i in range(len(pathset[p])-1):
             arc = [pathset[p][i], pathset[p][i+1]]
             arc_used = np.where((arc_index == arc).all(axis=1))
-            mp[p][arc_used[0]] = 1
+            mp[p][arc_used[0]] = 1   
+
     return(mp)
 
 def solution_finder(pointer,  Q, c_array, P=[]):
     
     if pointer == len(c_array):
-        
+        print(P)
         check = np.full(3, False, dtype=bool)
         
         # 1. flow_sum = d
@@ -58,7 +59,6 @@ def solution_finder(pointer,  Q, c_array, P=[]):
         check[1] = (P <= mp_max_capacity).all()
         # 3. flow_sum <= arc_max_capacity
         check[2] = (np.sum(P.reshape(np.size(N,0),1)*N[:pointer], axis=0) <= arc_max_capacity).all()
-        
         if check.all():
             Q.append(P)
             
@@ -140,7 +140,6 @@ def transfer_num(expection, r):
 # num of nodes
 node_num = 5
 node = np.zeros((node_num, node_num), dtype=int)
-
 network(0,1)
 network(1,2)
 network(0,2)
@@ -150,19 +149,19 @@ network(2,4)
 network(2,3)
 network(3,4)
 
-
 arc_capacity = np.array([
 [0.05,  0.05,  0.1,    0.8, 0, 0],
-[0.05,  0.05,  0.1,    0.8, 0, 0],
 [0.05,  0.1,   0.85,   0,   0, 0],
+[0.05,  0.05,  0.1,    0.8, 0, 0],
 [0.1,   0.9,   0 ,     0,   0, 0], 
 [0.1,   0.9,   0 ,     0,   0, 0], 
-[0.05,  0.05,  0.1,    0.2, 0.6, 0],
 [0.05,  0.1,   0.1,    0.1, 0.1, 0.55], 
+[0.05,  0.05,  0.1,    0.2, 0.6, 0],
 [0.05,  0.05,  0.1,    0.8, 0, 0]
 ])
 
-lead_time = np.array([2,1,3,3,1,2,2,1])
+lead_time = np.array([2,3,1,1,3,2,2,1])
+
 # list of arcs
 arc_index = np.argwhere(node==1)
 arc_num = len(arc_index)
@@ -172,26 +171,29 @@ N = np.empty((0,arc_num),dtype=int)
 
 count_2 = 0
 count_4 = 0
-for i in [1,4]:
+for i in [3,4]:
     for j in range(1):
         N = np.append(N, minimal_path(j,i),axis=0)
-        if i==1:
+        if i==3:
             count_2 += len(minimal_path(j,i))
         else: 
             count_4 += len(minimal_path(j,i))
-print(count_2)
+
+
 # find maximal capacity of each mp
 cap = N*arc_max_capacity
 mp_max_capacity = [np.min(c[np.nonzero(c)]) for c in cap]
 
+
+"""
+
 # generate feasible solutions
-demand_1 = 0
-demand_2 = 3
+
+
 feasible_solutions = []
 
 solution_finder(0, feasible_solutions, mp_max_capacity)
-print(feasible_solutions)
-""""
+
 # current capacity
 current_capacity = current_capacity_get(feasible_solutions, N)
 
@@ -200,5 +202,4 @@ d_MP = d_MP(current_capacity)
 
 #caculate RSDP
 success_rate = RSDP(d_MP)
-print(success_rate)
-"""
+print(success_rate)"""
