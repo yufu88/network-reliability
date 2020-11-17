@@ -43,7 +43,7 @@ def minimal_path(start_node, end_node):
 
 def solution_finder(pointer,  Q, c_array, P=[]):
     if pointer == len(c_array):
-        print(P)
+        #print(P)
         check = np.full(3, False, dtype=bool)
         
         # 1. flow_sum = d
@@ -182,15 +182,16 @@ cap = N*arc_max_capacity
 mp_max_capacity = [np.min(c[np.nonzero(c)]) for c in cap]
 
 
-"""
+demand_1=8
+demand_2=0
 
 # generate feasible solutions
 
-
+print(mp_max_capacity)
 feasible_solutions = []
 
 solution_finder(0, feasible_solutions, mp_max_capacity)
-
+"""
 # current capacity
 current_capacity = current_capacity_get(feasible_solutions, N)
 

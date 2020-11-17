@@ -88,7 +88,7 @@ def compare(array1, array2):
         temp[i] = max(array1[i],array2[i])
     return temp
 
-"""
+
 # sum prob
 def RSDP(X_array, index):
     prob = 0
@@ -102,11 +102,10 @@ def RSDP(X_array, index):
             else:
                 for j in range(i-1):
                     X_array[j] = compare(X_array[j],X_array[i])
-                    print(X_array)
                 temp_2 = RSDP(X_array, index-1)
     prob += temp_1-temp_2
-    return round(prob,4)"""
-
+    return round(prob,4)
+"""
 # prob of each iteration
 def TM_caculator(d_MP, index):
     PR = probability(d_MP[index])
@@ -127,53 +126,64 @@ def RSDP(d_MP):
         index+=1
         
     return round(prob,4)
+"""
+
+
 #network building
-node_num = 5
-d1 = 8
-d2 = 0
+node_num = 8
+d1 = 5
+d2 = 6
 t = 9
 
 node = np.zeros((node_num, node_num), dtype=int)
-network(0,1)
-network(1,2)
 network(0,2)
-network(1,4)
-network(1,3)
-network(2,4)
+network(1,2)
 network(2,3)
-network(3,4)
+network(2,4)
+network(3,5)
+network(4,5)
+network(5,4)
+network(4,6)
+network(5,7)
+
 
 arc_capacity = np.array([
-[0.05,  0.05,  0.1,    0.8, 0, 0],
-[0.05,  0.1,   0.85,   0,   0, 0],
-[0.05,  0.05,  0.1,    0.8, 0, 0],
-[0.1,   0.9,   0 ,     0,   0, 0], 
-[0.1,   0.9,   0 ,     0,   0, 0], 
-[0.05,  0.1,   0.1,    0.1, 0.1, 0.55], 
-[0.05,  0.05,  0.1,    0.2, 0.6, 0],
-[0.05,  0.05,  0.1,    0.8, 0, 0]
+[0, 0.000030, 0.001128, 0.021434, 0.203627, 0.773781, 0],
+[0, 0.000002, 0.000085, 0.002143, 0.030544, 0.232134, 0.735092],
+[0, 0.000002, 0.000085, 0.002143, 0.030544, 0.232134, 0.735092],
+[0, 0.000030, 0.001128, 0.021434, 0.203627, 0.773781, 0],
+[0, 0.000002, 0.000085, 0.002143, 0.030544, 0.232134, 0.735092],
+[0, 0.000030, 0.001128, 0.021434, 0.203627, 0.773781, 0],
+[0, 0.000030, 0.001128, 0.021434, 0.203627, 0.773781, 0],
+[0, 0.000002, 0.000085, 0.002143, 0.030544, 0.232134, 0.735092],
+[0, 0.000002, 0.000085, 0.002143, 0.030544, 0.232134, 0.735092]
 ])
 
-lead_time = np.array([2,3,1,1,3,2,2,1])
+lead_time = np.array([3,1,1,1,1,1,1,3,1])
 arc_index = np.argwhere(node==1)
 arc_num = len(arc_index)
+arc_max_capacity = (np.count_nonzero(arc_capacity, axis=1)).reshape(1,arc_num)
+
 
 mp = []
 max_cap = []
 flow = []
 
-#np.empty((0,arc_num),dtype=int)
+np.empty((0,arc_num),dtype=int)
 MP = np.empty((0,arc_num),dtype=int)
 count = 0
-MP = np.append(MP,minimal_path(0,4, node, d1, t),axis=0)
+MP = np.append(MP,minimal_path(0,6, node, 4, 10),axis=0)
+print(MP)
 count += len(MP)
-MP = np.append(MP,minimal_path(1,4, node, 0, t),axis=0)
-
-
-d_MP = mp_compare(mp)
+MP = np.append(MP,minimal_path(1,7, node, 5, 8),axis=0)
+print(MP)
+d_MP = mp_compare(MP)
 print(d_MP)
+print(RSDP(d_MP, 4))
 
-print(RSDP(d_MP[:count]))
+"""feasible_solutions = []
+solution_finder(0, feasible_solutions, max_cap)"""
+
 
 """
 Q = []

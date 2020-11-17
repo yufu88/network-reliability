@@ -43,16 +43,15 @@ def minimal_path(start_node, end_node, node, demand, time):
     arc_max_capacity = (np.count_nonzero(arc_capacity, axis=1)-1).reshape(1,arc_num)
     P_lead_time = np.sum(P*lead_time, axis=1)
     P_max_capacity = [np.min(c[np.nonzero(c)]) for c in P*arc_max_capacity]
-    mp = []
-    max_cap = []
-    flow = []
+    
     for i in range(len(P)):
         ceiling = math.ceil(demand/(time-P_lead_time[i]))
         if P_max_capacity[i] >= ceiling:
             mp.append(P[i])
             max_cap.append(P_max_capacity[i])
             flow.append(ceiling)
-    return(np.array(mp), max_cap, arc_max_capacity.flatten(),flow)
+    return(np.array(mp))
+    #, max_cap, arc_max_capacity.flatten(),flow
 
 
 def echeck(a1, a2):
@@ -63,7 +62,8 @@ def echeck(a1, a2):
     return(all(e_array))
 
 def mp_compare(mp_array):
-    c_cap = np.reshape(MP[3], (len(MP[3]),1))*MP[0]
+    c_cap = np.reshape(flow, (len(flow),1))*MP
+
     index = []
     for i in range(len(c_cap)-1):
         for j in range(i+1, len(c_cap)):
@@ -105,7 +105,7 @@ def RSDP(d_MP):
     prob = 0
     for i in range(len(d_MP)):
         prob += TM_caculator(d_MP, index)
-        print("T",TM_caculator(d_MP, index))
+        #print("T",TM_caculator(d_MP, index))
         index+=1
         
     return round(prob,4)
@@ -113,7 +113,7 @@ def RSDP(d_MP):
 #network building
 node_num = 5
 d = 8
-t = 12
+t = 9
 
 node = np.zeros((node_num, node_num), dtype=int)
 network(0,1)
@@ -138,16 +138,21 @@ arc_capacity = np.array([
 
 lead_time = np.array([2,3,1,1,3,2,2,1])
 
+mp = []
+max_cap = []
+flow = []
+
+#np.empty((0,arc_num),dtype=int)
 MP = minimal_path(0,4, node, d, t)
+
 arc_index = np.argwhere(node==1)
 arc_num = len(arc_index)
 d_MP = mp_compare(MP)
+
 print(d_MP)
+print(RSDP(d_MP))
 
-for i in range
-
-"""
-Q = []
+"""Q = []
 
 def find(pointer, value, v_num, F=[], total=0):
       if pointer == v_num:
