@@ -51,12 +51,12 @@ def solution_finder(pointer,  Q, c_array, P=[]):
         
         s1= np.sum(P[:count_2])
         s2= np.sum(P[count_2:])
-        if s1== demand_1 & s2== demand_2:
+        if (s1== demand_1) & (s2== demand_2):
             check[0] = True
         # 2. flow <= mp_max_capacity
         check[1] = (P <= mp_max_capacity).all()
         # 3. flow_sum <= arc_max_capacity
-        check[2] = (np.sum(P.reshape(np.size(N,0),1)*N[:pointer], axis=0) <= arc_max_capacity).all()
+        check[2] = (P@N[:pointer] <= arc_max_capacity).all()
         if check.all():
             Q.append(P)
     else :
@@ -67,13 +67,6 @@ def solution_finder(pointer,  Q, c_array, P=[]):
                 solution_finder(pointer+1, Q, c_array, P+[i])
             else:
                 break
-
-def current_capacity_get(feasible_solutions, N):
-    current_capacity = []
-    for f in feasible_solutions:
-        current_capacity.append(np.sum(f.reshape(np.size(N,0),1)*N, axis=0))
-    current_capacity = np.array(current_capacity)
-    return(current_capacity)
 
 def d_MP(current_capacity):
     I=[]
@@ -167,37 +160,32 @@ arc_max_capacity = (np.count_nonzero(arc_capacity, axis=1)-1).reshape(1,len(arc_
 N = np.empty((0,arc_num),dtype=int)
 
 count_2 = 0
-count_4 = 0
-for i in [3,4]:
-    for j in range(1):
-        N = np.append(N, minimal_path(j,i),axis=0)
-        if i==3:
-            count_2 += len(minimal_path(j,i))
-        else: 
-            count_4 += len(minimal_path(j,i))
 
-
+N = np.append(N, minimal_path(0,3),axis=0)
+count_2 += len(N)
+N = np.append(N, minimal_path(0,4),axis=0)
+print(N)
 # find maximal capacity of each mp
 cap = N*arc_max_capacity
 mp_max_capacity = [np.min(c[np.nonzero(c)]) for c in cap]
 
-
-demand_1=8
-demand_2=0
+demand_1=2
+demand_2=3
 
 # generate feasible solutions
-
-print(mp_max_capacity)
 feasible_solutions = []
 
 solution_finder(0, feasible_solutions, mp_max_capacity)
-"""
+
 # current capacity
-current_capacity = current_capacity_get(feasible_solutions, N)
+current_capacity=[]
+for f in feasible_solutions:
+        current_capacity.append(f@N)
+current_capacity = np.array(current_capacity)
 
 #d_MP
 d_MP = d_MP(current_capacity)
 
 #caculate RSDP
 success_rate = RSDP(d_MP)
-print(success_rate)"""
+print(success_rate)
