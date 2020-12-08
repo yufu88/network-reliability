@@ -50,8 +50,11 @@ def solution_finder(pointer,  Q, c_array, P=[]):
         P = np.array(P, dtype=int)
         
         s1= np.sum(P[:count_2])
-        s2= np.sum(P[count_2:])
-        if (s1== demand_1) & (s2== demand_2):
+        s2= np.sum(P[count_2:count_3])
+        s3= np.sum(P[count_3:count_4])
+        s4= np.sum(P[count_4:])
+
+        if (s1== demand_1) & (s2== demand_2) & (s3==demand_3) & (s4==demand_4):
             check[0] = True
         # 2. flow <= mp_max_capacity
         check[1] = (P <= mp_max_capacity).all()
@@ -63,7 +66,7 @@ def solution_finder(pointer,  Q, c_array, P=[]):
         for i in range(c_array[pointer]+1):
             R = np.array(P, dtype=int)
             # 3. flow_sum <= arc_max_capacity
-            if pointer==0 or (np.sum(R.reshape(pointer,1)*N[:pointer], axis=0) <= arc_max_capacity).all():
+            if pointer==0 or (R@N[:pointer] <= arc_max_capacity).all():
                 solution_finder(pointer+1, Q, c_array, P+[i])
             else:
                 break
@@ -117,7 +120,6 @@ def RSDP(d_MP):
             prob += TM
     return prob
 
-
 def rate(bag_num, failure, success_rate):
     # C ( n+m-1 m )
     C = factorial(bag_num+failure-1)/(factorial(failure)*factorial(bag_num-1))
@@ -159,18 +161,22 @@ arc_max_capacity = (np.count_nonzero(arc_capacity, axis=1)-1).reshape(1,len(arc_
 
 N = np.empty((0,arc_num),dtype=int)
 
-count_2 = 0
-
 N = np.append(N, minimal_path(0,3),axis=0)
-count_2 += len(N)
+count_2 = len(N)
+N = np.append(N, minimal_path(1,3),axis=0)
+count_3 = len(N)
 N = np.append(N, minimal_path(0,4),axis=0)
-print(N)
+count_4 = len(N)
+N = np.append(N, minimal_path(1,4),axis=0)
+
 # find maximal capacity of each mp
 cap = N*arc_max_capacity
 mp_max_capacity = [np.min(c[np.nonzero(c)]) for c in cap]
 
-demand_1=2
-demand_2=3
+demand_1=1
+demand_2=2
+demand_3=2
+demand_4=2
 
 # generate feasible solutions
 feasible_solutions = []
