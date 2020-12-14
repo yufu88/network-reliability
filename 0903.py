@@ -128,7 +128,7 @@ def rate(bag_num, failure, success_rate):
 
 def transfer_num(expection, r):
     return round(expection/r,0)
-
+"""
 # num of nodes
 node_num = 5
 node = np.zeros((node_num, node_num), dtype=int)
@@ -151,32 +151,55 @@ arc_capacity = np.array([
 [0.05,  0.05,  0.1,    0.2, 0.6, 0],
 [0.05,  0.05,  0.1,    0.8, 0, 0]
 ])
+"""
+node_num = 8
+node = np.zeros((node_num, node_num), dtype=int)
+lead_time = np.array([3,1,1,1,1,1,1,3,1])
 
-lead_time = np.array([2,3,1,1,3,2,2,1])
+network(0,2)
+network(1,2)
+network(2,4)
+#network(2,3)
+network(3,5)
+network(4,5)
+network(5,4)
+network(4,6)
+network(5,7)
+
+arc_capacity = np.array([
+[0.00000031,0.00002969,0.00112813,0.02143438,0.20362656,0.77378094,0.00000000],
+[0.00000002,0.00000178,0.00008461,0.00214344,0.03054398,0.23213428,0.73509189],
+[0.00000002,0.00000178,0.00008461,0.00214344,0.03054398,0.23213428,0.73509189],
+#[0.00000031,0.00002969,0.00112813,0.02143438,0.20362656,0.77378094,0.00000000],
+[0.00000002,0.00000178,0.00008461,0.00214344,0.03054398,0.23213428,0.73509189],
+[0.00000031,0.00002969,0.00112813,0.02143438,0.20362656,0.77378094,0.00000000],
+[0.00000031,0.00002969,0.00112813,0.02143438,0.20362656,0.77378094,0.00000000],
+[0.00000002,0.00000178,0.00008461,0.00214344,0.03054398,0.23213428,0.73509189],
+[0.00000002,0.00000178,0.00008461,0.00214344,0.03054398,0.23213428,0.73509189]])
 
 # list of arcs
 arc_index = np.argwhere(node==1)
 arc_num = len(arc_index)
 arc_max_capacity = (np.count_nonzero(arc_capacity, axis=1)-1).reshape(1,len(arc_index))
-
+#print(arc_index)
 N = np.empty((0,arc_num),dtype=int)
 
-N = np.append(N, minimal_path(0,3),axis=0)
+N = np.append(N, minimal_path(0,6),axis=0)
 count_2 = len(N)
-N = np.append(N, minimal_path(1,3),axis=0)
+N = np.append(N, minimal_path(1,6),axis=0)
 count_3 = len(N)
-N = np.append(N, minimal_path(0,4),axis=0)
+N = np.append(N, minimal_path(0,7),axis=0)
 count_4 = len(N)
-N = np.append(N, minimal_path(1,4),axis=0)
+N = np.append(N, minimal_path(1,7),axis=0)
 
 # find maximal capacity of each mp
 cap = N*arc_max_capacity
 mp_max_capacity = [np.min(c[np.nonzero(c)]) for c in cap]
 
-demand_1=1
+demand_1=0
 demand_2=2
-demand_3=2
-demand_4=2
+demand_3=4
+demand_4=0
 
 # generate feasible solutions
 feasible_solutions = []
@@ -188,7 +211,7 @@ current_capacity=[]
 for f in feasible_solutions:
         current_capacity.append(f@N)
 current_capacity = np.array(current_capacity)
-
+print(current_capacity[:6])
 #d_MP
 d_MP = d_MP(current_capacity)
 
